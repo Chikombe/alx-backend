@@ -2,12 +2,11 @@
 """
 Simple pagination module with hypermedia pagination
 
-This module provides a Server class to paginate
-a database of popular baby names.
+This module provides a Server class to paginate a database of popular baby names.
 """
 
 import csv
-from typing import List, Tuple, Dict
+from typing import List, Tuple, Dict, Any
 import math
 
 
@@ -33,6 +32,8 @@ class Server:
     DATA_FILE = "Popular_Baby_Names.csv"
 
     def __init__(self):
+        """Initializes a new Server instance.
+        """
         self.__dataset = None
 
     def dataset(self) -> List[List]:
@@ -55,13 +56,10 @@ class Server:
             page_size (int): The number of items per page.
 
         Returns:
-            List[List]: A list of rows representing the requested
-            page of the dataset.
+            List[List]: A list of rows representing the requested page of the dataset.
         """
-        assert isinstance(page, int) and page > 0,
-        "Page must be an integer greater than 0"
-        assert isinstance(page_size, int) and page_size > 0,
-        "Page size must be an integer greater than 0"
+        assert isinstance(page, int) and page > 0, "Page must be an integer greater than 0"
+        assert isinstance(page_size, int) and page_size > 0, "Page size must be an integer greater than 0"
 
         start_index, end_index = index_range(page, page_size)
         dataset = self.dataset()
@@ -71,7 +69,7 @@ class Server:
 
         return dataset[start_index:end_index]
 
-    def get_hyper(self, page: int = 1, page_size: int = 10) -> Dict[str, any]:
+    def get_hyper(self, page: int = 1, page_size: int = 10) -> Dict[str, Any]:
         """
         Return a dictionary with pagination metadata.
 
@@ -80,13 +78,13 @@ class Server:
             page_size (int): The number of items per page.
 
         Returns:
-            Dict[str, any]: A dictionary containing pagination metadata.
+            Dict[str, Any]: A dictionary containing pagination metadata.
         """
         data = self.get_page(page, page_size)
         dataset_length = len(self.dataset())
         total_pages = math.ceil(dataset_length / page_size)
 
-        next_page = page + 1 if page < total_pages else None
+        next_page = page + 1 if (page * page_size) < dataset_length else None
         prev_page = page - 1 if page > 1 else None
 
         return {
